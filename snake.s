@@ -323,9 +323,9 @@ COLLISION_CHECK:
     ; Check if the snake is going outside of the playfield
     ; On the Y axis
     LDA 200
-    CMP #30
+    CMP #2F
     BCC COLLISION_CHECK_COLLISION
-    CMP #E0
+    CMP #DF
     BCS COLLISION_CHECK_COLLISION
     ; On the X axis
     LDA 203
@@ -369,7 +369,8 @@ RESET_GAME:
     STA dir
     STA snakelen
     ; Initialize the snake head.
-    LDA #80
+    ; Sprites are drawn 1px lower
+    LDA #7F
     STA 200
     LDA #80
     STA 201
@@ -521,6 +522,9 @@ RESET_APPLE:
     AND #78
     CLC
     ADC #38
+    ; Sprites are drawn 1px lower
+    SEC
+    SBC #01
     STA 2FC
     JSR RAND
     AND #78
@@ -544,10 +548,8 @@ MOVE_SNAKE_POS:
 MOVE_SNAKE_POS_LOOP:
     LDA 1FC, X
     STA 200, X
-    LDA 1FD, X
+    LDA #82
     STA 201, X
-    LDA 1FE, X
-    STA 202, X
     LDA 1FF, X
     STA 203, X
     ; Loop if needed
@@ -779,44 +781,44 @@ MOV_Y:
 PALETTE:
     ; Palette 1
     .byte 1D
+    .byte 00
     .byte 10
     .byte 20
-    .byte 30
     ; Palette 2
     .byte 1D
+    .byte 00
     .byte 10
     .byte 20
-    .byte 30
     ; Palette 3
     .byte 1D
+    .byte 00
     .byte 10
     .byte 20
-    .byte 30
     ; Palette 4
     .byte 1D
+    .byte 00
     .byte 10
     .byte 20
-    .byte 30
     ; Palette 1
     .byte 1D
-    .byte 10
-    .byte 20
-    .byte 30
+    .byte 0A
+    .byte 16
+    .byte 1A
     ; Palette 2
     .byte 1D
+    .byte 00
     .byte 10
     .byte 20
-    .byte 30
     ; Palette 3
     .byte 1D
+    .byte 00
     .byte 10
     .byte 20
-    .byte 30
     ; Palette 4
     .byte 1D
+    .byte 00
     .byte 10
     .byte 20
-    .byte 30
 
 ; Some strings
 ; "SNAKE"
