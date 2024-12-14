@@ -44,6 +44,8 @@
 
 ; Sprites: Y, tile, flags, X
 
+; Change maxticks and bytes 9 and 10 of the header to make a NTSC build.
+
 .segment HEADER
 .byte 4E
 .byte 45
@@ -54,8 +56,8 @@
 .byte 00
 .byte 00
 .byte 00
-.byte 01
-.byte 21 ; 20 for bus conflicts and 1 for multiple TV systems
+.byte 01 ; 1 for PAL
+.byte 32 ; 20 for bus conflicts, 10 for no PRG ram and 2 for PAL
 
 .segment ZEROPAGE
 .res nmi 1
@@ -154,6 +156,7 @@ RESET_LOADNAM_LOOP4:
     JSR LOAD_TITLE
     JSR LOAD_PRESS_START
     JSR LOAD_COPYRIGHT
+    JSR LOAD_VERSION
     ; Set the max ticks to 0A on PAL and 0C on NTSC.
     LDA #0A
     STA maxticks
@@ -240,6 +243,7 @@ HANDLE_GAME_OVER:
     JSR LOAD_TITLE
     JSR LOAD_PRESS_START
     JSR LOAD_COPYRIGHT
+    JSR LOAD_VERSION
     LDA #00
     STA screen
 HANDLE_GAME_OVER_NOSTART:
@@ -446,6 +450,26 @@ LOAD_COPYRIGHT_LOOP:
     INX
     LDA COPYRIGHT, X
     BNE LOAD_COPYRIGHT_LOOP
+    RTS
+
+LOAD_VERSION:
+    LDA namleft
+    BNE LOAD_VERSION
+    ; Draw it at (23;20)
+    LDA #22
+    STA namptr
+    LDA #97
+    STA namptr+1
+    LDX #00
+    LDA VERSION, X
+LOAD_VERSION_LOOP:
+    LDY namleft
+    STA nambuffer, Y
+    INY
+    STY namleft
+    INX
+    LDA VERSION, X
+    BNE LOAD_VERSION_LOOP
     RTS
 
 LOAD_PRESS_START:
@@ -923,6 +947,15 @@ COPYRIGHT:
     .byte 69
     .byte 38
     .byte 38
+    .byte 00
+
+; "v.1.1"
+VERSION:
+    .byte 76
+    .byte 2E
+    .byte 31
+    .byte 2E
+    .byte 31
     .byte 00
 
 .segment VECTORS
