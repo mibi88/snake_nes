@@ -223,6 +223,8 @@ HANDLE_INGAME:
     LDA #00
     STA ticks
     ; Display the snake
+    LDA #00
+    STA lock
     JSR UPDATE_SNAKE
     RTS
 
@@ -635,9 +637,9 @@ UPDATE_SNAKE_NOCOLLISION:
     JSR LOAD_SCORE
     ; Move the apple
     JSR RESET_APPLE
-    ; Do not exceed a snake len of 6 (6*8 = 48)!
+    ; Do not exceed a snake len of 5 (6*4 = 24)!
     LDA snakelen
-    CMP #30
+    CMP #18
     BCS UPDATE_SNAKE_SKIP
     ; Increase the snake len
     LDA snakelen
@@ -714,23 +716,63 @@ IRQ:
     RTI
 
 INGAME_LEFT:
+    ; If the player already changed direction, ignore this button press
+    LDA lock
+    BNE INGAME_LEFT_SKIP
+    ; Keep the player from going in the opposite direction
+    LDA dir
+    CMP #02
+    BEQ INGAME_LEFT_SKIP
+    ; Set the new direction
     LDA #01
     STA dir
+    STA lock
+INGAME_LEFT_SKIP:
     RTS
 
 INGAME_RIGHT:
+    ; If the player already changed direction, ignore this button press
+    LDA lock
+    BNE INGAME_RIGHT_SKIP
+    ; Keep the player from going in the opposite direction
+    LDA dir
+    CMP #01
+    BEQ INGAME_RIGHT_SKIP
+    ; Set the new direction
     LDA #02
     STA dir
+    STA lock
+INGAME_RIGHT_SKIP:
     RTS
 
 INGAME_UP:
+    ; If the player already changed direction, ignore this button press
+    LDA lock
+    BNE INGAME_UP_SKIP
+    ; Keep the player from going in the opposite direction
+    LDA dir
+    CMP #04
+    BEQ INGAME_UP_SKIP
+    ; Set the new direction
     LDA #03
     STA dir
+    STA lock
+INGAME_UP_SKIP:
     RTS
 
 INGAME_DOWN:
+    ; If the player already changed direction, ignore this button press
+    LDA lock
+    BNE INGAME_DOWN_SKIP
+    ; Keep the player from going in the opposite direction
+    LDA dir
+    CMP #03
+    BEQ INGAME_DOWN_SKIP
+    ; Set the new direction
     LDA #04
     STA dir
+    STA lock
+INGAME_DOWN_SKIP:
     RTS
 
 SUB_NONE:
