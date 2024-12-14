@@ -74,7 +74,6 @@
 .res lock 1
 .res screen 1
 .res tmp 1
-.res tmp2 1
 
 .segment BSS
 .res nambuffer 100
@@ -203,7 +202,6 @@ HANDLE_TITLE:
     LDA ctrl1+3
     BEQ HANDLE_TITLE_NOSTART
     ; Go back to the ingame screen
-    JSR REMOVE_START_LINE
     JSR DRAW_PLAYFIELD
     JSR RESET_GAME
     LDA #01
@@ -235,9 +233,7 @@ HANDLE_GAME_OVER:
     LDA ctrl1+3
     BEQ HANDLE_GAME_OVER_NOSTART
     ; Go back to the title screen
-    JSR REMOVE_GAME_OVER_LINE
     JSR REMOVE_SPRITES
-    JSR REMOVE_TITLE_LINE
     JSR REMOVE_PLAYFIELD
     JSR LOAD_TITLE
     JSR LOAD_PRESS_START
@@ -487,60 +483,6 @@ LOAD_GAME_OVER_LOOP:
     INX
     LDA GAME_OVER, X
     BNE LOAD_GAME_OVER_LOOP
-    RTS
-
-REMOVE_TITLE_LINE:
-    LDA namleft
-    BNE REMOVE_TITLE_LINE
-    LDA #20
-    STA namptr
-    LDA #60
-    STA namptr+1
-    LDA #00
-REMOVE_TITLE_LINE_LOOP:
-    LDY namleft
-    STA nambuffer, Y
-    INY
-    STY namleft
-    INX
-    CPX #20
-    BNE REMOVE_TITLE_LINE_LOOP
-    RTS
-
-REMOVE_GAME_OVER_LINE:
-    LDA namleft
-    BNE REMOVE_GAME_OVER_LINE
-    LDA #20
-    STA namptr
-    LDA #80
-    STA namptr+1
-    LDA #00
-REMOVE_GAME_OVER_LINE_LOOP:
-    LDY namleft
-    STA nambuffer, Y
-    INY
-    STY namleft
-    INX
-    CPX #20
-    BNE REMOVE_GAME_OVER_LINE_LOOP
-    RTS
-
-REMOVE_START_LINE:
-    LDA namleft
-    BNE REMOVE_TITLE_LINE
-    LDA #21
-    STA namptr
-    LDA #00
-    STA namptr+1
-    LDA #00
-REMOVE_START_LINE_LOOP:
-    LDY namleft
-    STA nambuffer, Y
-    INY
-    STY namleft
-    INX
-    CPX #20
-    BNE REMOVE_START_LINE_LOOP
     RTS
 
 LOAD_SCORE:
